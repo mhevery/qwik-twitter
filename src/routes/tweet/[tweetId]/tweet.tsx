@@ -1,7 +1,5 @@
 // The code here is heavily borrowed/copied with permission from
 // https://github.com/kentcdodds/kentcdodds.com/blob/main/app/utils/twitter.server.ts#L152
-import http from "http";
-import https from "https";
 import {
   component$,
   Resource,
@@ -109,10 +107,10 @@ type TweetResponse =
   | TweetErrorJsonResponse
   | TweetRateLimitErrorJsonResponse;
 
-export async function getTweetImpl(
-  tweetId: string,
-  bearerToken: string
-): Promise<TweetResponse> {
+export const bearerToken =
+  "AAAAAAAAAAAAAAAAAAAAAGprkwEAAAAAckX3bcO3DhvGHHSS8PPyJWwLdtA%3DruJRNnn5tzBpk594xLUQ93H8w2UiOhQdpsRt6zLg1IgieFYaTM";
+
+export async function getTweetImpl(tweetId: string): Promise<TweetResponse> {
   const url = new URL(`https://api.twitter.com/2/tweets/${tweetId}`);
   const params = {
     "tweet.fields": "public_metrics,created_at",
@@ -134,41 +132,25 @@ export async function getTweetImpl(
   return tweetJson as TweetResponse;
 }
 
-export function unshorten(
+export async function unshorten(
   urlString: string,
   maxFollows: number = 10
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    try {
-      const url = new URL(urlString);
-      if (url.protocol) {
-        const { request } = url.protocol === "https:" ? https : http;
-        request(urlString, { method: "HEAD" }, (response) => {
-          const {
-            headers: { location },
-          } = response;
-          if (location && location !== urlString && maxFollows > 0) {
-            const fullLocation = location.startsWith("/")
-              ? new URL(location, url).toString()
-              : location;
-            void unshorten(fullLocation, maxFollows - 1).then(resolve);
-          } else {
-            resolve(urlString);
-          }
-        }).end();
-      } else {
-        reject(`Invalid URL: ${urlString}`);
-      }
-    } catch (error: unknown) {
-      reject(error);
-    }
-  });
+  const url = new URL(urlString);
+  const response = await fetch(url, { method: "HEAD" });
+  const location = response.headers.get("location");
+  if (location && location !== urlString && maxFollows > 0) {
+    const fullLocation = location.startsWith("/")
+      ? new URL(location, url).toString()
+      : location;
+    return unshorten(fullLocation, maxFollows - 1);
+  }
+  return urlString;
 }
 
 export const Tweet = component$<{
   tweet: TweetJsonResponse;
   expandQuotedTweet: boolean;
-  bearerToken: string;
 }>((props) => {
   useStylesScoped$(CSS);
   const author = props.tweet.includes.users?.find(
@@ -227,7 +209,6 @@ export const Tweet = component$<{
       <ExpandedQuote
         tweet={props.tweet}
         expandQuotedTweet={props.expandQuotedTweet}
-        bearerToken={props.bearerToken}
       />
       <CreatedAt tweet={props.tweet} tweetURL={tweetURL} />
       <Stats tweet={props.tweet} tweetURL={tweetURL} />
@@ -422,7 +403,6 @@ export const LinkMetadata = (props: { links: Link[] }) => {
 export const ExpandedQuote = component$<{
   tweet: TweetJsonResponse;
   expandQuotedTweet: boolean;
-  bearerToken: string;
 }>((props) => {
   const tweetRsrc = useResource$<TweetResponse[]>(async () => {
     if (!props.expandQuotedTweet) return [];
@@ -431,10 +411,9 @@ export const ExpandedQuote = component$<{
         (props.tweet.data.referenced_tweets ?? []).map(
           async (referencedTweet) => {
             if (referencedTweet.type !== "quoted") return null;
-            const quotedTweet = await getTweetImpl(
-              referencedTweet.id,
-              props.bearerToken
-            ).catch(() => {});
+            const quotedTweet = await getTweetImpl(referencedTweet.id).catch(
+              () => {}
+            );
             if (!quotedTweet || !("data" in quotedTweet)) return null;
             return quotedTweet;
           }
@@ -453,7 +432,6 @@ export const ExpandedQuote = component$<{
                 <Tweet
                   tweet={tweet as TweetJsonResponse}
                   expandQuotedTweet={false}
-                  bearerToken={props.bearerToken}
                 />
               ))}
             </div>

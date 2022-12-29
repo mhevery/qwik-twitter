@@ -1,4 +1,3 @@
-import { useEnvData } from "@builder.io/qwik";
 import { RequestHandler } from "@builder.io/qwik-city";
 import { renderToString } from "@builder.io/qwik/server";
 import { getTweetImpl, Tweet, TweetJsonResponse } from "./tweet";
@@ -26,18 +25,10 @@ export const onGet: RequestHandler<string> = async ({
     CACHE.set(pathname, cacheItem);
   }
   if (!cacheItem.script) {
-    const bearerToken = useEnvData<string>(
-      "TWITTER_BEARER_TOKEN",
-      "AAAAAAAAAAAAAAAAAAAAAGprkwEAAAAAckX3bcO3DhvGHHSS8PPyJWwLdtA%3DruJRNnn5tzBpk594xLUQ93H8w2UiOhQdpsRt6zLg1IgieFYaTM"
-    );
     const tweetId = params.tweetId;
-    const tweet = await getTweetImpl(tweetId, bearerToken);
+    const tweet = await getTweetImpl(tweetId);
     const renderResult = await renderToString(
-      <Tweet
-        tweet={tweet as TweetJsonResponse}
-        expandQuotedTweet={true}
-        bearerToken={bearerToken}
-      />,
+      <Tweet tweet={tweet as TweetJsonResponse} expandQuotedTweet={true} />,
       {
         containerTagName: "div",
         containerAttributes: {
