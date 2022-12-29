@@ -109,10 +109,10 @@ type TweetResponse =
   | TweetErrorJsonResponse
   | TweetRateLimitErrorJsonResponse;
 
-export const token: string =
-  "AAAAAAAAAAAAAAAAAAAAAGprkwEAAAAAckX3bcO3DhvGHHSS8PPyJWwLdtA%3DruJRNnn5tzBpk594xLUQ93H8w2UiOhQdpsRt6zLg1IgieFYaTM";
-
-export async function getTweetImpl(tweetId: string): Promise<TweetResponse> {
+export async function getTweetImpl(
+  tweetId: string,
+  bearerToken: string
+): Promise<TweetResponse> {
   const url = new URL(`https://api.twitter.com/2/tweets/${tweetId}`);
   const params = {
     "tweet.fields": "public_metrics,created_at",
@@ -127,7 +127,7 @@ export async function getTweetImpl(tweetId: string): Promise<TweetResponse> {
   }
   const response = await fetch(url.toString(), {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${bearerToken}`,
     },
   });
   const tweetJson = await response.json();
@@ -168,6 +168,7 @@ export function unshorten(
 export const Tweet = component$<{
   tweet: TweetJsonResponse;
   expandQuotedTweet: boolean;
+  bearerToken: string;
 }>((props) => {
   useStylesScoped$(CSS);
   const author = props.tweet.includes.users?.find(
@@ -226,6 +227,7 @@ export const Tweet = component$<{
       <ExpandedQuote
         tweet={props.tweet}
         expandQuotedTweet={props.expandQuotedTweet}
+        bearerToken={props.bearerToken}
       />
       <CreatedAt tweet={props.tweet} tweetURL={tweetURL} />
       <Stats tweet={props.tweet} tweetURL={tweetURL} />
@@ -420,6 +422,7 @@ export const LinkMetadata = (props: { links: Link[] }) => {
 export const ExpandedQuote = component$<{
   tweet: TweetJsonResponse;
   expandQuotedTweet: boolean;
+  bearerToken: string;
 }>((props) => {
   const tweetRsrc = useResource$<TweetResponse[]>(async () => {
     if (!props.expandQuotedTweet) return [];
@@ -428,9 +431,10 @@ export const ExpandedQuote = component$<{
         (props.tweet.data.referenced_tweets ?? []).map(
           async (referencedTweet) => {
             if (referencedTweet.type !== "quoted") return null;
-            const quotedTweet = await getTweetImpl(referencedTweet.id).catch(
-              () => {}
-            );
+            const quotedTweet = await getTweetImpl(
+              referencedTweet.id,
+              props.bearerToken
+            ).catch(() => {});
             if (!quotedTweet || !("data" in quotedTweet)) return null;
             return quotedTweet;
           }
@@ -449,6 +453,7 @@ export const ExpandedQuote = component$<{
                 <Tweet
                   tweet={tweet as TweetJsonResponse}
                   expandQuotedTweet={false}
+                  bearerToken={props.bearerToken}
                 />
               ))}
             </div>
