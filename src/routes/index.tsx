@@ -10,7 +10,7 @@ export default component$(() => {
       <script
         type="module"
         async
-        src="https://qwik-twitter.pages.dev/tweet/1606438382561026049"
+        src="https://qwik-twitter.pages.dev/tweet/1608389069469540355"
       />
     </div>
   );

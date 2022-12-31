@@ -5,7 +5,7 @@ import { getTweetImpl, Tweet, TweetJsonResponse } from "./tweet";
 export const CACHE: Map<string, { script: string | null; timestamp: number }> =
   new Map();
 
-const cacheTimeSec = 60;
+const cacheTimeSec = 60 * 60;
 export const token: string =
   "AAAAAAAAAAAAAAAAAAAAAGprkwEAAAAAckX3bcO3DhvGHHSS8PPyJWwLdtA%3DruJRNnn5tzBpk594xLUQ93H8w2UiOhQdpsRt6zLg1IgieFYaTM";
 
@@ -68,12 +68,16 @@ function clientBootstrap(pathname: string, html: string) {
     tweetParser.firstElementChild!,
     currentScript
   );
+  currentScript.setAttribute("applied", "true");
 
   function findCurrentScript(): HTMLScriptElement | null {
     let script: HTMLScriptElement | null = null;
     Array.from(document.getElementsByTagName("script")).forEach((s) => {
       try {
-        if (new URL(s.src).pathname === pathname) {
+        if (
+          new URL(s.src).pathname === pathname &&
+          s.getAttribute("applied") === null
+        ) {
           script = s;
         }
       } catch (e) {
