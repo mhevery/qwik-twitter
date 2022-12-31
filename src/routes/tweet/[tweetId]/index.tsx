@@ -5,7 +5,7 @@ import { getTweetImpl, Tweet, TweetJsonResponse } from "./tweet";
 export const CACHE: Map<string, { script: string | null; timestamp: number }> =
   new Map();
 
-const cacheTimeSec = 60 * 60;
+const cacheTimeSec = 60;
 export const token: string =
   "AAAAAAAAAAAAAAAAAAAAAGprkwEAAAAAckX3bcO3DhvGHHSS8PPyJWwLdtA%3DruJRNnn5tzBpk594xLUQ93H8w2UiOhQdpsRt6zLg1IgieFYaTM";
 
