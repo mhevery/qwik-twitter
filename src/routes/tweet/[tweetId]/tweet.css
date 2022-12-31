@@ -11,6 +11,10 @@
   padding: 2rem;
   border-radius: 0.5rem;
   background: var(--bg-secondary);
+  border: 1px solid black;
+  border-radius: 12px;
+  margin: 5px;
+  background-color: white;
 }
 
 .dark .tweet-embed {
@@ -18,7 +22,7 @@
 }
 
 .tweet-embed blockquote {
-  font-size: 1.125rem;
+  font-size: 1rem;
   margin: 1rem 0;
   white-space: break-spaces;
   padding: 0;

@@ -6,12 +6,12 @@ export default component$(() => {
     <div>
       <script type="module" async src="/tweet/1606438382561026049" />
       <script type="module" async src="/tweet/1605251245186244608" />
-      <script type="module" async src="/tweet/1606674790156472320" />
       <script
         type="module"
         async
         src="https://qwik-twitter.pages.dev/tweet/1608389069469540355"
       />
+      <script type="module" async src="/tweet/1606674790156472320" />
     </div>
   );
 });
