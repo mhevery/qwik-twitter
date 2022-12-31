@@ -52,6 +52,7 @@ export const onGet: RequestHandler<string> = async ({
     staleWhileRevalidate: cacheTimeSec,
   });
   headers.set("Content-Type", "text/javascript");
+  headers.set("Access-Control-Allow-Origin", "*");
   send(200, cacheItem.script);
 };
 
