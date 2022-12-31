@@ -12,6 +12,7 @@ export default component$(() => {
         src="https://qwik-twitter.pages.dev/tweet/1608389069469540355"
       />
       <script type="module" async src="/tweet/1606674790156472320" />
+      <script type="module" async src="/tweet/1572610381365022722" />
     </div>
   );
 });

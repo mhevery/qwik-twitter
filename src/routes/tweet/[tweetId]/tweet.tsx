@@ -135,8 +135,24 @@ export async function unshorten(
   maxFollows: number = 10
 ): Promise<string> {
   const url = new URL(urlString);
-  const response = await fetch(url, { method: "HEAD" });
-  const location = response.headers.get("location");
+  console.log("unshorten", url);
+  const headers = new Headers({
+    "User-Agent": "ignore",
+  });
+  const response = await fetch(url, {
+    method: "HEAD",
+    redirect: "manual",
+    mode: "no-cors",
+    headers: headers,
+  });
+  const location =
+    response.headers.get("location") ||
+    // This is a work around for the platform bug which does not allow
+    // HEAD requests and reading of `location` header.
+    ((await getMetadata(urlString)) as any).redirect;
+  response.headers.forEach((value, key) => {
+    console.log("   :", url.toString(), key, value);
+  });
   if (location && location !== urlString && maxFollows > 0) {
     const fullLocation = location.startsWith("/")
       ? new URL(location, url).toString()
@@ -577,6 +593,9 @@ export async function getMetadata(url: string): Promise<Metadata> {
         property.startsWith("og:")
       ) {
         meta[property.substring(3)] = content;
+      }
+      if (property == undefined && content && content.startsWith("0;URL=")) {
+        meta["redirect"] = content.substring(content.indexOf("=") + 1);
       }
       return "";
     });
