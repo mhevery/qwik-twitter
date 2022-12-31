@@ -7,6 +7,7 @@ import {
   useStylesScoped$,
 } from "@builder.io/qwik";
 import { JSX } from "@builder.io/qwik/jsx-runtime";
+import env from "~/env";
 import CSS from "./tweet.css?inline";
 
 type Link = {
@@ -107,9 +108,6 @@ type TweetResponse =
   | TweetErrorJsonResponse
   | TweetRateLimitErrorJsonResponse;
 
-export const bearerToken =
-  "AAAAAAAAAAAAAAAAAAAAAGprkwEAAAAAckX3bcO3DhvGHHSS8PPyJWwLdtA%3DruJRNnn5tzBpk594xLUQ93H8w2UiOhQdpsRt6zLg1IgieFYaTM";
-
 export async function getTweetImpl(tweetId: string): Promise<TweetResponse> {
   const url = new URL(`https://api.twitter.com/2/tweets/${tweetId}`);
   const params = {
@@ -125,7 +123,7 @@ export async function getTweetImpl(tweetId: string): Promise<TweetResponse> {
   }
   const response = await fetch(url.toString(), {
     headers: {
-      Authorization: `Bearer ${bearerToken}`,
+      Authorization: `Bearer ${env.TWITTER_BEARER_TOKEN}`,
     },
   });
   const tweetJson = await response.json();
