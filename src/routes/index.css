@@ -1,0 +1,30 @@
+label {
+  display: block;
+  font-weight: bold;
+}
+
+input[name="tweetURL"] {
+  width: 500px;
+  display: block;
+}
+
+form > button {
+  display: block;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+@keyframes flash {
+  50% {
+    box-shadow: 0px 0px 10px blue;
+  }
+}
+
+.active {
+  animation-name: flash;
+  animation-duration: 200ms;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+}
