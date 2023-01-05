@@ -20,11 +20,12 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
   baseURL.pathname = "";
   baseURL.search = "";
   baseURL.hash = "";
+  const renderedTweet = await getRenderedTweet(tweetID, new URL(request.url));
   return {
     tweetURL: actionData?.tweetURL || PLACEHOLDER_TWEET,
     tweetID: tweetID,
     baseURL: baseURL.toString(),
-    html: (await getRenderedTweet(tweetID, new URL(request.url))).html,
+    html: renderedTweet ? renderedTweet.html : "INVALID TWEET URL",
   };
 });
 

@@ -1,6 +1,6 @@
 import { RequestHandler } from "@builder.io/qwik-city";
 import { renderToString } from "@builder.io/qwik/server";
-import { getTweetImpl, Tweet, TweetJsonResponse } from "./tweet";
+import { getTweetImpl, isTweetError, Tweet, TweetJsonResponse } from "./tweet";
 
 export interface RenderedTweet {
   script: string | null;
@@ -29,13 +29,16 @@ export const onGet: RequestHandler<string> = async ({
   });
   headers.set("Content-Type", "text/javascript");
   headers.set("Access-Control-Allow-Origin", "*");
-  send(200, renderedTweet.script);
+  send(
+    200,
+    renderedTweet ? renderedTweet.script : 'console.log("INVALID TWEET URL")'
+  );
 };
 
 export async function getRenderedTweet(
   tweetID: string,
   requestURL: URL
-): Promise<RenderedTweet> {
+): Promise<RenderedTweet | null> {
   let cacheItem = CACHE.get(tweetID);
   const now = new Date().getTime();
   if (!cacheItem || now - cacheItem.timestamp > 1000 * cacheTimeSec) {
@@ -44,6 +47,10 @@ export async function getRenderedTweet(
   }
   if (!cacheItem.script) {
     const tweet = await getTweetImpl(tweetID);
+    console.log(tweet);
+    if (!tweet || isTweetError(tweet)) {
+      return null;
+    }
     const renderResult = await renderToString(
       <Tweet tweet={tweet as TweetJsonResponse} expandQuotedTweet={true} />,
       {

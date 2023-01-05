@@ -666,3 +666,9 @@ export const ArrowSvg = () => (
     ></path>
   </svg>
 );
+
+export function isTweetError(
+  tweet: TweetResponse
+): tweet is TweetErrorJsonResponse {
+  return (tweet as TweetErrorJsonResponse).errors !== undefined;
+}
