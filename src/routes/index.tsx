@@ -42,7 +42,10 @@ export default component$(() => {
   const htmlAndJs = `${tweet.value!.html}\n${jsOnly}`;
   return (
     <div>
-      <form action={onTweet.actionPath} method="POST">
+      <form
+        action={onTweet.actionPath + "&qwikcity.static=false"}
+        method="POST"
+      >
         <label>Tweet URL</label>
         <input type="text" name="tweetURL" value={tweetURL} />
         <button type="submit">Submit</button>
