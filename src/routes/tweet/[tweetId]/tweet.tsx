@@ -135,7 +135,6 @@ export async function unshorten(
   maxFollows: number = 10
 ): Promise<string> {
   const url = new URL(urlString);
-  console.log("unshorten", url);
   const headers = new Headers({
     "User-Agent": "ignore",
   });
@@ -150,9 +149,6 @@ export async function unshorten(
     // This is a work around for the platform bug which does not allow
     // HEAD requests and reading of `location` header.
     ((await getMetadata(urlString)) as any).redirect;
-  response.headers.forEach((value, key) => {
-    console.log("   :", url.toString(), key, value);
-  });
   if (location && location !== urlString && maxFollows > 0) {
     const fullLocation = location.startsWith("/")
       ? new URL(location, url).toString()
@@ -275,7 +271,12 @@ export function TweetText({
             {isHandle(text) ? text : toLink(links, text)}
           </a>
         ) : (
-          text
+          text.split("\n").map((line, idx) => (
+            <span key={idx}>
+              {line}
+              <br />
+            </span>
+          ))
         )
       )}
     </blockquote>

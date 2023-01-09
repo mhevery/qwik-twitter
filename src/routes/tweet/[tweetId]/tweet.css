@@ -160,6 +160,9 @@ a {
 .tweet-embed .tweet-quoted .tweet-embed .tweet-time {
   display: none;
 }
+.tweet-time a {
+  color: black;
+}
 
 .tweet-embed .tweet-ref-metadata {
   display: flex;

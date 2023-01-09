@@ -16,7 +16,8 @@ export const tweetAction = action$((form) => {
 export const REMOVE_STYLES =
   /<style([^>^"^']+|("[^"]*")|('[^']*'))+>([^<^"^']+|("[^"]*")|('[^']*'))+<\/style>/gim;
 
-export const REMOVE_INSPECTOR = /data-qwik-inspector="[^"]*"/gim;
+export const REMOVE_INSPECTOR = /\sdata-qwik-inspector="[^"]*"/gim;
+export const REMOVE_CLASS = /\sclass="[^"]*"/gim;
 
 export const tweetLoader = loader$(async ({ getData, request }) => {
   const actionData = await getData(tweetAction);
@@ -26,10 +27,9 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
   baseURL.search = "";
   baseURL.hash = "";
   const renderedTweet = await getRenderedTweet(tweetID, new URL(request.url));
-  const html = (renderedTweet?.html || "INVALID TWEET URL").replace(
-    REMOVE_INSPECTOR,
-    ""
-  );
+  const html = (renderedTweet?.html || "INVALID TWEET URL")
+    .replace(REMOVE_INSPECTOR, "")
+    .replace(REMOVE_CLASS, "");
   return {
     tweetURL: actionData?.tweetURL || PLACEHOLDER_TWEET,
     tweetID: tweetID,

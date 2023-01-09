@@ -47,7 +47,6 @@ export async function getRenderedTweet(
   }
   if (!cacheItem.script) {
     const tweet = await getTweetImpl(tweetID);
-    console.log(tweet);
     if (!tweet || isTweetError(tweet)) {
       return null;
     }
@@ -58,6 +57,7 @@ export async function getRenderedTweet(
         containerAttributes: {
           class: "tweet-container",
           "tweet-id": `/tweet/${tweetID}`,
+          style: "max-width: 400px",
         },
         base: new URL("/build/", requestURL).toString(),
       }
