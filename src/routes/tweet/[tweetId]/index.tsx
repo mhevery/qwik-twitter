@@ -35,6 +35,10 @@ export const onGet: RequestHandler<string> = async ({
   );
 };
 
+export const onOptions: RequestHandler = async ({ send }) => {
+  send(200, "OK");
+};
+
 export async function getRenderedTweet(
   tweetID: string,
   requestURL: URL
