@@ -5,17 +5,22 @@
 .tweet-embed {
   display: flex;
   flex-direction: column;
-  max-width: 300px;
+  max-width: 450px;
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
-  border-radius: 0.5rem;
+  border-radius: 5px;
   background: var(--bg-secondary);
   border: 1px solid black;
   border-radius: 12px;
   margin: 5px;
   background-color: white;
   color: black;
+  font-size: 20px;
+  font-style: normal;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  white-space: break-spaces;
 }
 
 a {
@@ -27,12 +32,9 @@ a {
 }
 
 .tweet-embed blockquote {
-  font-size: 1rem;
   margin: 1rem 0;
-  white-space: break-spaces;
   padding: 0;
   border: 0;
-  font-style: normal;
   background-color: unset;
 }
 
@@ -41,7 +43,6 @@ a {
 }
 
 .tweet-embed .tweet-author {
-  font-size: 1rem;
   display: flex;
   text-decoration: none;
   align-items: center;
@@ -170,11 +171,9 @@ a {
 
 .tweet-embed .tweet-ref-metadata .tweet-ref-metadata-title {
   padding: 0.75rem 0.75rem 0 0.75rem;
-  font-size: 0.85rem;
 }
 .tweet-embed .tweet-ref-metadata .tweet-ref-metadata-description {
   padding: 0 12px 4px 12px;
-  font-size: 0.85rem;
   font-weight: normal;
   color: var(--text-secondary);
 }
@@ -189,7 +188,6 @@ a {
 
 .tweet-embed .tweet-ref-metadata .tweet-ref-metadata-domain {
   padding: 0 12px 4px 12px;
-  font-size: 0.8rem;
   display: inline-flex;
   align-items: center;
 }
@@ -219,7 +217,6 @@ a {
 
 .tweet-embed .tweet-time a {
   color: var(--text-secondary);
-  font-size: 0.85rem;
   font-weight: normal;
   text-decoration: none;
 }
@@ -246,7 +243,6 @@ a {
 
 .tweet-embed .tweet-stats a {
   display: flex;
-  font-size: 0.85rem;
   font-weight: normal;
   align-items: center;
   color: inherit;
