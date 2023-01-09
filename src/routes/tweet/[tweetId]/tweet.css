@@ -10,7 +10,7 @@
   margin: 0 auto;
   padding: 20px;
   border-radius: 5px;
-  background: var(--bg-secondary);
+  background: white;
   border: 1px solid black;
   border-radius: 12px;
   margin: 5px;
@@ -28,7 +28,7 @@ a {
 }
 
 .dark .tweet-embed {
-  border: 1px solid var(--border-secondary);
+  border: 1px solid black
 }
 
 .tweet-embed blockquote {
@@ -46,6 +46,7 @@ a {
   display: flex;
   text-decoration: none;
   align-items: center;
+  color: black;
 }
 
 .tweet-embed .tweet-author img {
@@ -70,14 +71,14 @@ a {
 
 .tweet-embed .tweet-author .tweet-author-handle {
   font-weight: normal;
-  color: var(--text-secondary);
+  color: lightslategray;
 }
 
 .tweet-embed .tweet-media-container {
   width: 100%;
   overflow: hidden;
   border-radius: 0.75rem;
-  border: 1px solid var(--border-secondary);
+  border: 1px solid black
   margin-bottom: 1rem;
 }
 .tweet-embed .tweet-media-grid,
@@ -178,7 +179,7 @@ a {
 .tweet-embed .tweet-ref-metadata .tweet-ref-metadata-description {
   padding: 0 12px 4px 12px;
   font-weight: normal;
-  color: var(--text-secondary);
+  color: black
   font-size: small;
 }
 
@@ -204,11 +205,11 @@ a {
 .tweet-embed .tweet-ref-metadata:hover,
 .tweet-embed .tweet-ref-metadata:focus {
   text-decoration: none;
-  background-color: var(--bg-alt);
+  background-color: lightgray;
 }
 
 .dark .tweet-embed .tweet-ref-metadata {
-  border: 1px solid var(--border-secondary);
+  border: 1px solid black;
 }
 
 .tweet-embed .tweet-ref-metadata img {
@@ -218,11 +219,10 @@ a {
 .tweet-embed .tweet-time {
   padding-bottom: 1rem;
   font-size: small;
-  border-bottom: 1px solid var(--border-secondary);
+  border-bottom: 1px solid black;
 }
 
 .tweet-embed .tweet-time a {
-  color: var(--text-secondary);
   font-weight: normal;
   text-decoration: none;
 }
@@ -230,7 +230,7 @@ a {
 .tweet-embed .tweet-time a:hover,
 .tweet-embed .tweet-time a:focus {
   text-decoration: underline;
-  color: var(--text-primary);
+  color: black
 }
 
 .tweet-embed .tweet-stats {
