@@ -383,7 +383,7 @@ export const LinkMetadata = (props: { links: Link[] }) => {
   const lastMetadataLink = props.links.reverse().find((l) => l.metadata);
   return (
     <>
-      {lastMetadataLink ? (
+      {lastMetadataLink && lastMetadataLink.metadata?.title ? (
         <a
           href={lastMetadataLink.longLink}
           class="tweet-ref-metadata"
