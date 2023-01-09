@@ -125,11 +125,11 @@ export function copy(input: HTMLTextAreaElement): void {
 }
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "Welcome to Qwik Twitter",
   meta: [
     {
       name: "description",
-      content: "Qwik site description",
+      content: "Qwik Twitter",
     },
   ],
 };
