@@ -13,6 +13,11 @@ export const tweetAction = action$((form) => {
   return { tweetURL, tweetID };
 });
 
+export const REMOVE_STYLES =
+  /<style([^>^"^']+|("[^"]*")|('[^']*'))+>([^<^"^']+|("[^"]*")|('[^']*'))+<\/style>/gim;
+
+export const REMOVE_INSPECTOR = /data-qwik-inspector="[^"]*"/gim;
+
 export const tweetLoader = loader$(async ({ getData, request }) => {
   const actionData = await getData(tweetAction);
   const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
@@ -21,11 +26,16 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
   baseURL.search = "";
   baseURL.hash = "";
   const renderedTweet = await getRenderedTweet(tweetID, new URL(request.url));
+  const html = (renderedTweet?.html || "INVALID TWEET URL").replace(
+    REMOVE_INSPECTOR,
+    ""
+  );
   return {
     tweetURL: actionData?.tweetURL || PLACEHOLDER_TWEET,
     tweetID: tweetID,
     baseURL: baseURL.toString(),
-    html: renderedTweet ? renderedTweet.html : "INVALID TWEET URL",
+    html,
+    htmlNoStyle: html.replace(REMOVE_STYLES, ""),
   };
 });
 
@@ -35,12 +45,14 @@ export default component$(() => {
   const tweet = tweetLoader.use();
   const jsRef = useSignal<HTMLTextAreaElement>();
   const htmlRef = useSignal<HTMLTextAreaElement>();
+  const htmlNoStyleRef = useSignal<HTMLTextAreaElement>();
 
   const tweetURL = tweet.value!.tweetURL;
   const tweetID = tweet.value!.tweetID;
   const baseURL = tweet.value!.baseURL;
   const jsOnly = `<script type="module" async src="${baseURL}tweet/${tweetID}"></script>`;
   const htmlAndJs = `${tweet.value!.html}\n${jsOnly}`;
+  const htmlJsNoStyle = `${tweet.value!.htmlNoStyle}\n${jsOnly}`;
   return (
     <div>
       <form
@@ -66,9 +78,23 @@ export default component$(() => {
         />
       </div>
       <div>
+        <label onClick$={() => copy(htmlNoStyleRef.value!)} class="cursor">
+          <CopyIcon />
+          {" HTML + JS"}({Math.round(htmlJsNoStyle.length / 1024)} kB)
+        </label>
+        <textarea
+          name="tweet"
+          rows={10}
+          cols={80}
+          disabled
+          value={htmlJsNoStyle}
+          ref={htmlNoStyleRef}
+        />
+      </div>
+      <div>
         <label onClick$={() => copy(htmlRef.value!)} class="cursor">
           <CopyIcon />
-          {" HTML + JS"}({Math.round(htmlAndJs.length / 1024)} kB)
+          {" HTML + JS + Style"}({Math.round(htmlAndJs.length / 1024)} kB)
         </label>
         <textarea
           name="tweet"
