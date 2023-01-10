@@ -23,6 +23,8 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
   const actionData = await getData(tweetAction);
   const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
   const baseURL = new URL(request.url);
+  const host = request.headers.get("host");
+  host && (baseURL.host = host);
   baseURL.pathname = "";
   baseURL.search = "";
   baseURL.hash = "";
