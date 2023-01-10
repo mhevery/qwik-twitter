@@ -18,21 +18,26 @@ export const onGet: RequestHandler<string> = async ({
   cacheControl,
   request,
 }) => {
-  const renderedTweet = await getRenderedTweet(
-    params.tweetId,
-    new URL(request.url)
-  );
+  const tweetId = params.tweetId.split(".")[0];
+  const extension = params.tweetId.split(".")[1] || "js";
+  const renderedTweet = await getRenderedTweet(tweetId, new URL(request.url));
   cacheControl({
     maxAge: cacheTimeSec,
     sMaxAge: cacheTimeSec,
     staleWhileRevalidate: cacheTimeSec,
   });
-  headers.set("Content-Type", "text/javascript");
-  headers.set("Access-Control-Allow-Origin", "*");
-  send(
-    200,
-    renderedTweet ? renderedTweet.script : 'console.log("INVALID TWEET URL")'
-  );
+  if (extension == "js") {
+    headers.set("Content-Type", "text/javascript");
+    headers.set("Access-Control-Allow-Origin", "*");
+    send(
+      200,
+      renderedTweet ? renderedTweet.script : 'console.log("INVALID TWEET URL")'
+    );
+  } else {
+    headers.set("Content-Type", "text/html");
+    headers.set("Access-Control-Allow-Origin", "*");
+    send(200, renderedTweet ? renderedTweet.html : "INVALID TWEET URL");
+  }
 };
 
 export const onOptions: RequestHandler = async ({ send }) => {

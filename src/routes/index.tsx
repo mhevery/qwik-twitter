@@ -51,6 +51,7 @@ export default component$(() => {
   useStylesScoped$(CSS);
   const onTweet = tweetAction.use();
   const tweet = tweetLoader.use();
+  const ssiRef = useSignal<HTMLTextAreaElement>();
   const jsRef = useSignal<HTMLTextAreaElement>();
   const htmlRef = useSignal<HTMLTextAreaElement>();
   const htmlNoStyleRef = useSignal<HTMLTextAreaElement>();
@@ -71,6 +72,19 @@ export default component$(() => {
         <input type="text" name="tweetURL" value={tweetURL} />
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <label onClick$={() => copy(ssiRef.value!)} class="cursor">
+          <CopyIcon />
+          {" Server-side include HTML"}
+        </label>
+        <input
+          type="text"
+          name="ssi"
+          disabled
+          value={`${baseURL}tweet/${tweetID}.html`}
+          ref={ssiRef}
+        />
+      </div>
       <div>
         <label onClick$={() => copy(jsRef.value!)} class="cursor">
           <CopyIcon />

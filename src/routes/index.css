@@ -3,7 +3,8 @@ label {
   font-weight: bold;
 }
 
-input[name="tweetURL"] {
+input[name="tweetURL"],
+input[name="ssi"] {
   width: 500px;
   display: block;
 }
