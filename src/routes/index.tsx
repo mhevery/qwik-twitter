@@ -23,7 +23,12 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
   const actionData = await getData(tweetAction);
   const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
   const baseURL = new URL(request.url);
-  const host = request.headers.get("host");
+  const host = request.headers
+    .get("host")
+    ?.replace(
+      /^[0-9a-f]{8}\.qwik-twitter\.pages\.dev$/,
+      "qwik-twitter.builder.io"
+    );
   host && (baseURL.host = host);
   baseURL.pathname = "";
   baseURL.search = "";
