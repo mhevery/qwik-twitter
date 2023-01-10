@@ -27,15 +27,16 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
   baseURL.search = "";
   baseURL.hash = "";
   const renderedTweet = await getRenderedTweet(tweetID, new URL(request.url));
-  const html = (renderedTweet?.html || "INVALID TWEET URL")
-    .replace(REMOVE_INSPECTOR, "")
-    .replace(REMOVE_CLASS, "");
+  const html = (renderedTweet?.html || "INVALID TWEET URL").replace(
+    REMOVE_INSPECTOR,
+    ""
+  );
   return {
     tweetURL: actionData?.tweetURL || PLACEHOLDER_TWEET,
     tweetID: tweetID,
     baseURL: baseURL.toString(),
     html,
-    htmlNoStyle: html.replace(REMOVE_STYLES, ""),
+    htmlNoStyle: html.replace(REMOVE_STYLES, "").replace(REMOVE_CLASS, ""),
   };
 });
 
