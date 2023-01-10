@@ -20,6 +20,9 @@ export const REMOVE_INSPECTOR = /\sdata-qwik-inspector="[^"]*"/gim;
 export const REMOVE_CLASS = /\sclass="[^"]*"/gim;
 
 export const tweetLoader = loader$(async ({ getData, request }) => {
+  request.headers.forEach((value, key) => {
+    console.log("HEADER", key, value);
+  });
   const actionData = await getData(tweetAction);
   const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
   const baseURL = new URL(request.url);
