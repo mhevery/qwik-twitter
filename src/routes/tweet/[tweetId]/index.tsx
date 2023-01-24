@@ -9,7 +9,7 @@ export interface RenderedTweet {
 }
 export const CACHE: Map<string, RenderedTweet> = new Map();
 
-const cacheTimeSec = 60 * 60;
+const cacheTimeSec = 60 * 60; // 1 hour
 
 export const onGet: RequestHandler<string> = async ({
   params,
@@ -24,7 +24,7 @@ export const onGet: RequestHandler<string> = async ({
   cacheControl({
     maxAge: cacheTimeSec,
     sMaxAge: cacheTimeSec,
-    staleWhileRevalidate: cacheTimeSec,
+    staleWhileRevalidate: cacheTimeSec * 100,
   });
   if (extension == "js") {
     headers.set("Content-Type", "text/javascript");
@@ -48,9 +48,10 @@ export async function getRenderedTweet(
   tweetID: string,
   requestURL: URL
 ): Promise<RenderedTweet | null> {
+  clearOlderThan(60 * cacheTimeSec);
   let cacheItem = CACHE.get(tweetID);
   const now = new Date().getTime();
-  if (!cacheItem || now - cacheItem.timestamp > 1000 * cacheTimeSec) {
+  if (!cacheItem) {
     cacheItem = { script: null, timestamp: now, html: null };
     CACHE.set(tweetID, cacheItem);
   }
@@ -122,4 +123,14 @@ function clientBootstrap(pathname: string, html: string) {
     });
     return script;
   }
+}
+function clearOlderThan(timeMilliseconds: number) {
+  const now = new Date().getTime();
+  const deleteKeys: string[] = [];
+  CACHE.forEach((value, key) => {
+    if (now - value.timestamp > timeMilliseconds) {
+      deleteKeys.push(key);
+    }
+  });
+  deleteKeys.forEach((key) => CACHE.delete(key));
 }

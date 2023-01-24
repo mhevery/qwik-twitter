@@ -256,10 +256,15 @@ export function TweetText({
   tweet: TweetJsonResponse;
   links: Link[];
 }) {
+  const parts = splitOnLinksAndNewlines(
+    tweet.data.text,
+    links,
+    tweet.includes.media
+  );
   return (
     <blockquote>
-      {splitOnLinks(tweet.data.text).map((text, idx) =>
-        idx % 2 === 1 ? (
+      {parts.map((text) =>
+        isUrl(text) ? (
           <a
             href={
               isHandle(text) ? "https://twitter.com/" + text.substring(1) : text
@@ -270,17 +275,50 @@ export function TweetText({
           >
             {isHandle(text) ? text : toLink(links, text)}
           </a>
+        ) : text == "\n" ? (
+          <br />
         ) : (
-          text.split("\n").map((line, idx) => (
-            <span key={idx}>
-              {line}
-              <br />
-            </span>
-          ))
+          <span>{text}</span>
         )
       )}
     </blockquote>
   );
+}
+
+function isUrl(text: string) {
+  return isHandle(text) || text.startsWith("https://");
+}
+
+function splitOnLinksAndNewlines(text: string, links: Link[], media?: Media[]) {
+  const parts: string[] = [];
+  splitOnLinks(text).forEach((text, idx) => {
+    if (idx % 2 === 1) {
+      parts.push(text);
+    } else {
+      text.split("\n").forEach((line) => {
+        line && parts.push(line);
+        parts.push("\n");
+      });
+    }
+  });
+  media?.forEach((media) => {
+    // if (!media.url) return;
+    const last = parts[parts.length - 1];
+    const expandLink = toLink(links, last);
+    if (
+      expandLink === media.url ||
+      expandLink == media.preview_image_url ||
+      expandLink.startsWith("https://twitter.com/")
+    ) {
+      // trim any trailing URLs which point to existing media
+      parts.pop();
+    }
+    while (parts[parts.length - 1] === "\n") {
+      // trim any trailing newlines
+      parts.pop();
+    }
+  });
+  return parts;
 }
 
 function isHandle(text: string) {

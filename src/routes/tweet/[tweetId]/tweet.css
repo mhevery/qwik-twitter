@@ -114,11 +114,10 @@ a {
 .tweet-embed .tweet-media-container .tweet-media-with-play-button {
   position: relative;
 }
-.prose
-  .tweet-embed
-  .tweet-media-container
-  .tweet-media-with-play-button
-  .tweet-media-play-button {
+.tweet-embed
+.tweet-media-container
+.tweet-media-with-play-button
+.tweet-media-play-button {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -127,16 +126,14 @@ a {
   transition: opacity 0.2s;
 }
 
-.prose
-  .tweet-embed
-  .tweet-media-container:hover
-  .tweet-media-with-play-button
-  .tweet-media-play-button,
-.prose
-  .tweet-embed
-  .tweet-media-container:focus
-  .tweet-media-with-play-button
-  .tweet-media-play-button {
+.tweet-embed
+.tweet-media-container:hover
+.tweet-media-with-play-button
+.tweet-media-play-button,
+.tweet-embed
+.tweet-media-container:focus
+.tweet-media-with-play-button
+.tweet-media-play-button {
   opacity: 1;
 }
 
@@ -336,4 +333,12 @@ a {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.tweet-media-grid, .tweet-media-container {
+  border: 1px solid black;
+}
+
+.tweet-embed .tweet-embed {
+  width: 300px;
 }

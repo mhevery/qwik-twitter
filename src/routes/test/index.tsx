@@ -4,13 +4,14 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 export default component$(() => {
   return (
     <div>
+      <script type="module" async src="/tweet/1614659646295314433" />
       <script type="module" async src="/tweet/1606438382561026049" />
       <script type="module" async src="/tweet/1605251245186244608" />
-      {/* <script
+      <script
         type="module"
         async
         src="https://qwik-twitter.pages.dev/tweet/1608389069469540355"
-      /> */}
+      />
       <blockquote
         tweet-id="1608389069469540355"
         style="width: 100px; height: 200px"
