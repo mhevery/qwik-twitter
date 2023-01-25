@@ -605,7 +605,7 @@ export function typedBoolean<T>(
   return Boolean(value);
 }
 const ELEMENT_REGEXP =
-  /<meta(\s+(\w+(=("[^"]*"|'[^']*')|[\w\-.]*)?)+)*\s*\/>/gm;
+  /<meta(\s+(\w+(=("[^"]*"|'[^']*')|[\w\-.]*)?)+)*\s*\/?>/gm;
 const ATTRIBUTE_REGEXP = /(\w+)=("[^"]*"|'[^']*'|[\w\-.]*|)/gm;
 export async function getMetadata(url: string): Promise<Metadata> {
   const html = await fetch(url).then((res) => res.text());

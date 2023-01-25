@@ -13,7 +13,7 @@
     "build.types": "tsc --incremental --noEmit",
     "deploy": "wrangler pages dev ./dist",
     "dev": "vite --mode ssr",
-    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
+    "dev.debug": "node --inspect ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "lint": "eslint \"src/**/*.ts*\"",
