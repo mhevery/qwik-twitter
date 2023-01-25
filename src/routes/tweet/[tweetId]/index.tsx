@@ -7,7 +7,6 @@ export interface RenderedTweet {
   timestamp: number;
   html: string | null;
 }
-export const CACHE: Map<string, RenderedTweet> = new Map();
 
 const cacheTimeSec = 60 * 60; // 1 hour
 
@@ -48,40 +47,35 @@ export async function getRenderedTweet(
   tweetID: string,
   requestURL: URL
 ): Promise<RenderedTweet | null> {
-  clearOlderThan(60 * cacheTimeSec);
-  let cacheItem = CACHE.get(tweetID);
-  const now = new Date().getTime();
-  if (!cacheItem) {
-    cacheItem = { script: null, timestamp: now, html: null };
-    CACHE.set(tweetID, cacheItem);
+  const tweet = await getTweetImpl(tweetID);
+  if (!tweet || isTweetError(tweet)) {
+    return null;
   }
-  if (!cacheItem.script) {
-    const tweet = await getTweetImpl(tweetID);
-    if (!tweet || isTweetError(tweet)) {
-      return null;
+  const renderResult = await renderToString(
+    <Tweet tweet={tweet as TweetJsonResponse} expandQuotedTweet={true} />,
+    {
+      containerTagName: "div",
+      containerAttributes: {
+        class: "tweet-container",
+        "tweet-id": `/tweet/${tweetID}`,
+        style: "max-width: 400px",
+      },
+      base: new URL("/build/", requestURL).toString(),
     }
-    const renderResult = await renderToString(
-      <Tweet tweet={tweet as TweetJsonResponse} expandQuotedTweet={true} />,
-      {
-        containerTagName: "div",
-        containerAttributes: {
-          class: "tweet-container",
-          "tweet-id": `/tweet/${tweetID}`,
-          style: "max-width: 400px",
-        },
-        base: new URL("/build/", requestURL).toString(),
-      }
-    );
-    cacheItem.html = renderResult.html;
-    cacheItem.script = [
-      `// Render: ${(1000000 * renderResult.timing.render).toFixed(0)}ms`,
-      `// Snapshot: ${(1000000 * renderResult.timing.snapshot).toFixed(0)}ms`,
-      `(${clientBootstrap.toString()})(${JSON.stringify(
-        `/tweet/${tweetID}`
-      )}, ${JSON.stringify(cacheItem.html)})`,
-    ].join("\n");
-  }
-  return cacheItem;
+  );
+  const html = renderResult.html;
+  const script = [
+    `// Render: ${(1000000 * renderResult.timing.render).toFixed(0)}ms`,
+    `// Snapshot: ${(1000000 * renderResult.timing.snapshot).toFixed(0)}ms`,
+    `(${clientBootstrap.toString()})(${JSON.stringify(
+      `/tweet/${tweetID}`
+    )}, ${JSON.stringify(html)})`,
+  ].join("\n");
+  return {
+    timestamp: Date.now(),
+    html: html,
+    script: script,
+  };
 }
 
 function clientBootstrap(pathname: string, html: string) {
@@ -123,14 +117,4 @@ function clientBootstrap(pathname: string, html: string) {
     });
     return script;
   }
-}
-function clearOlderThan(timeMilliseconds: number) {
-  const now = new Date().getTime();
-  const deleteKeys: string[] = [];
-  CACHE.forEach((value, key) => {
-    if (now - value.timestamp > timeMilliseconds) {
-      deleteKeys.push(key);
-    }
-  });
-  deleteKeys.forEach((key) => CACHE.delete(key));
 }
