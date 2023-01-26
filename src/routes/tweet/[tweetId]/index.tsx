@@ -112,7 +112,7 @@ function clientBootstrap(pathname: string, html: string) {
           script = s;
         }
       } catch (e) {
-        // ignore
+        console.log(e);
       }
     });
     return script;
