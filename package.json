@@ -22,8 +22,8 @@
     "qwik": "qwik"
   },
   "devDependencies": {
-    "@builder.io/qwik": "0.16.1",
-    "@builder.io/qwik-city": "0.1.0-beta6",
+    "@builder.io/qwik": "^0.18.1",
+    "@builder.io/qwik-city": "^0.2.1",
     "@types/eslint": "8.4.10",
     "@types/node": "^18.11.16",
     "@types/node-fetch": "latest",
@@ -38,5 +38,8 @@
     "vite": "4.0.1",
     "vite-tsconfig-paths": "3.5.0",
     "wrangler": "latest"
+  },
+  "dependencies": {
+    "zod": "^3.20.6"
   }
 }

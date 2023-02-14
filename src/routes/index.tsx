@@ -1,17 +1,22 @@
 import { component$, useSignal, useStylesScoped$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { action$, DocumentHead, loader$, zod$ } from "@builder.io/qwik-city";
 import CSS from "./index.css?inline";
 import { getRenderedTweet } from "./tweet/[tweetId]";
+import * as zod from "zod";
 
 export const PLACEHOLDER_TWEET_ID = "1606438382561026049";
 export const PLACEHOLDER_TWEET =
   "https://twitter.com/mhevery/status/" + PLACEHOLDER_TWEET_ID;
 
-export const tweetAction = action$((form) => {
-  const tweetURL = (form.get("tweetURL") as string) || PLACEHOLDER_TWEET;
-  const tweetID = tweetURL.split("/").pop()!;
-  return { tweetURL, tweetID };
-});
+export const useTweetAction = action$(
+  ({ tweetURL }) => {
+    const tweetID = tweetURL.split("/").pop()!;
+    return { tweetURL, tweetID };
+  },
+  zod$({
+    tweetURL: zod.string().url().default(PLACEHOLDER_TWEET),
+  })
+);
 
 export const REMOVE_STYLES =
   /<style([^>^"^']+|("[^"]*")|('[^']*'))+>([^<^"^']+|("[^"]*")|('[^']*'))+<\/style>/gim;
@@ -19,8 +24,8 @@ export const REMOVE_STYLES =
 export const REMOVE_INSPECTOR = /\sdata-qwik-inspector="[^"]*"/gim;
 export const REMOVE_CLASS = /\sclass="[^"]*"/gim;
 
-export const tweetLoader = loader$(async ({ getData, request }) => {
-  const actionData = await getData(tweetAction);
+export const useTweetLoader = loader$(async ({ resolveValue, request }) => {
+  const actionData = await resolveValue(useTweetAction);
   const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
   const baseURL = new URL(request.url);
   const host = request.headers
@@ -49,23 +54,23 @@ export const tweetLoader = loader$(async ({ getData, request }) => {
 
 export default component$(() => {
   useStylesScoped$(CSS);
-  const onTweet = tweetAction.use();
-  const tweet = tweetLoader.use();
+  const tweetAction = useTweetAction();
+  const tweetLoader = useTweetLoader();
   const ssiRef = useSignal<HTMLTextAreaElement>();
   const jsRef = useSignal<HTMLTextAreaElement>();
   const htmlRef = useSignal<HTMLTextAreaElement>();
   const htmlNoStyleRef = useSignal<HTMLTextAreaElement>();
 
-  const tweetURL = tweet.value!.tweetURL;
-  const tweetID = tweet.value!.tweetID;
-  const baseURL = tweet.value!.baseURL;
+  const tweetURL = tweetLoader.value!.tweetURL;
+  const tweetID = tweetLoader.value!.tweetID;
+  const baseURL = tweetLoader.value!.baseURL;
   const jsOnly = `<script type="module" async src="${baseURL}tweet/${tweetID}"></script>`;
-  const htmlAndJs = `${tweet.value!.html}\n${jsOnly}`;
-  const htmlJsNoStyle = `${tweet.value!.htmlNoStyle}\n${jsOnly}`;
+  const htmlAndJs = `${tweetLoader.value!.html}\n${jsOnly}`;
+  const htmlJsNoStyle = `${tweetLoader.value!.htmlNoStyle}\n${jsOnly}`;
   return (
     <div>
       <form
-        action={onTweet.actionPath + "&qwikcity.static=false"}
+        action={tweetAction.actionPath + "&qwikcity.static=false"}
         method="POST"
       >
         <label>Tweet URL</label>
