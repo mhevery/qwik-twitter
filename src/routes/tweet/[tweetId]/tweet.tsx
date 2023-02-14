@@ -100,7 +100,7 @@ type TweetRateLimitErrorJsonResponse = {
   title: "Too Many Requests";
   detail: "Too Many Requests";
   type: "about:blank";
-  status: 429;
+  status: number;
 };
 
 type TweetResponse =
@@ -256,11 +256,10 @@ export function TweetText({
   tweet: TweetJsonResponse;
   links: Link[];
 }) {
-  const parts = splitOnLinksAndNewlines(
-    tweet.data.text,
-    links,
-    tweet.includes.media
-  );
+  const tweetText = tweet.data.text
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">");
+  const parts = splitOnLinksAndNewlines(tweetText, links, tweet.includes.media);
   return (
     <blockquote>
       {parts.map((text) =>
@@ -278,7 +277,7 @@ export function TweetText({
         ) : text == "\n" ? (
           <br />
         ) : (
-          <span>{text}</span>
+          <span class="preserveSpace">{text}</span>
         )
       )}
     </blockquote>
@@ -709,5 +708,9 @@ export const ArrowSvg = () => (
 export function isTweetError(
   tweet: TweetResponse
 ): tweet is TweetErrorJsonResponse {
-  return (tweet as TweetErrorJsonResponse).errors !== undefined;
+  return (
+    (tweet as TweetErrorJsonResponse).errors !== undefined ||
+    (typeof (tweet as TweetRateLimitErrorJsonResponse).status === "number" &&
+      (tweet as TweetRateLimitErrorJsonResponse).status !== 200)
+  );
 }
