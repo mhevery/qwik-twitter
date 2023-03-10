@@ -24,6 +24,7 @@ export const onGet: RequestHandler<string> = async ({
     maxAge: cacheTimeSec,
     sMaxAge: cacheTimeSec,
     staleWhileRevalidate: cacheTimeSec * 100,
+    public: true,
   });
   if (extension == "js") {
     headers.set("Content-Type", "text/javascript");
