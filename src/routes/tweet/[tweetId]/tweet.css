@@ -337,7 +337,7 @@ a {
 
 .preserveSpace {
   white-space: pre-wrap;
-};
+}
 
 .tweet-media-grid, .tweet-media-container {
   border: 1px solid black;
