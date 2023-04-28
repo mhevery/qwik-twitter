@@ -107,7 +107,7 @@ function clientBootstrap(pathname: string, html: string) {
     Array.from(document.getElementsByTagName("script")).forEach((s) => {
       try {
         if (
-          new URL(s.src).pathname === pathname &&
+          new URL(s.src, location.toString()).pathname === pathname &&
           s.getAttribute("applied") === null
         ) {
           script = s;

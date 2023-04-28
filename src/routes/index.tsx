@@ -1,5 +1,10 @@
 import { component$, useSignal, useStylesScoped$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$, zod$ } from "@builder.io/qwik-city";
+import {
+  routeAction$,
+  DocumentHead,
+  routeLoader$,
+  zod$,
+} from "@builder.io/qwik-city";
 import CSS from "./index.css?inline";
 import { getRenderedTweet } from "./tweet/[tweetId]";
 import * as zod from "zod";
@@ -8,7 +13,7 @@ export const PLACEHOLDER_TWEET_ID = "1606438382561026049";
 export const PLACEHOLDER_TWEET =
   "https://twitter.com/mhevery/status/" + PLACEHOLDER_TWEET_ID;
 
-export const useTweetAction = action$(
+export const useTweetAction = routeAction$(
   ({ tweetURL }) => {
     const tweetID = tweetURL.split("/").pop()!;
     return { tweetURL, tweetID };
@@ -24,33 +29,35 @@ export const REMOVE_STYLES =
 export const REMOVE_INSPECTOR = /\sdata-qwik-inspector="[^"]*"/gim;
 export const REMOVE_CLASS = /\sclass="[^"]*"/gim;
 
-export const useTweetLoader = loader$(async ({ resolveValue, request }) => {
-  const actionData = await resolveValue(useTweetAction);
-  const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
-  const baseURL = new URL(request.url);
-  const host = request.headers
-    .get("host")
-    ?.replace(
-      /^[0-9a-f]{8}\.qwik-twitter\.pages\.dev$/,
-      "qwik-twitter.builder.io"
+export const useTweetLoader = routeLoader$(
+  async ({ resolveValue, request }) => {
+    const actionData = await resolveValue(useTweetAction);
+    const tweetID = actionData?.tweetID || PLACEHOLDER_TWEET_ID;
+    const baseURL = new URL(request.url);
+    const host = request.headers
+      .get("host")
+      ?.replace(
+        /^[0-9a-f]{8}\.qwik-twitter\.pages\.dev$/,
+        "qwik-twitter.builder.io"
+      );
+    host && (baseURL.host = host);
+    baseURL.pathname = "";
+    baseURL.search = "";
+    baseURL.hash = "";
+    const renderedTweet = await getRenderedTweet(tweetID, new URL(request.url));
+    const html = (renderedTweet?.html || "INVALID TWEET URL").replace(
+      REMOVE_INSPECTOR,
+      ""
     );
-  host && (baseURL.host = host);
-  baseURL.pathname = "";
-  baseURL.search = "";
-  baseURL.hash = "";
-  const renderedTweet = await getRenderedTweet(tweetID, new URL(request.url));
-  const html = (renderedTweet?.html || "INVALID TWEET URL").replace(
-    REMOVE_INSPECTOR,
-    ""
-  );
-  return {
-    tweetURL: actionData?.tweetURL || PLACEHOLDER_TWEET,
-    tweetID: tweetID,
-    baseURL: baseURL.toString(),
-    html,
-    htmlNoStyle: html.replace(REMOVE_STYLES, "").replace(REMOVE_CLASS, ""),
-  };
-});
+    return {
+      tweetURL: actionData?.tweetURL || PLACEHOLDER_TWEET,
+      tweetID: tweetID,
+      baseURL: baseURL.toString(),
+      html,
+      htmlNoStyle: html.replace(REMOVE_STYLES, "").replace(REMOVE_CLASS, ""),
+    };
+  }
+);
 
 export default component$(() => {
   useStylesScoped$(CSS);
